@@ -53,6 +53,7 @@ public class MyLocation {
                 latitudeNew = 0.0;
                 longitudeNew = 0.0;
             }
+            mOnListenLocation.callbackLocation(latitudeNew,longitudeNew);
             mHandler.postDelayed(this,1000);
         }
     };

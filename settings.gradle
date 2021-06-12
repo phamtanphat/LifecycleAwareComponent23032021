@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "LifecycleAwareComponent23032021"

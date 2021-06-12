@@ -21,28 +21,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mTvLocation = findViewById(R.id.textViewLocation);
 
-        mMyLocation = new MyLocation(this, new OnListenLocation() {
-            @Override
-            public void callbackLocation(double lat, double lon) {
-                mTvLocation.setText("Latitude " + lat + ", Longitude " + lon);
-            }
-        });
-
-        getLifecycle().addObserver(mMyLocation);
-
         mTvLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(
                             MainActivity.this,
                             new String[]{
-                                    Manifest.permission.ACCESS_FINE_LOCATION,
-                                    Manifest.permission.ACCESS_COARSE_LOCATION},
+                                    Manifest.permission.ACCESS_FINE_LOCATION},
                             REQUEST_CODE_LOCATION
                     );
                 }else{
-                    mMyLocation.startListenLocation();
+                    setUpListenLocation();
                 }
             }
         });
@@ -52,9 +42,22 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_LOCATION){
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED){
-                mMyLocation.startListenLocation();
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED ){
+                setUpListenLocation();
             }
         }
+    }
+
+    private void setUpListenLocation(){
+        mMyLocation = new MyLocation(MainActivity.this, new OnListenLocation() {
+            @Override
+            public void callbackLocation(double lat, double lon) {
+                if (lat != 0 && lon != 0){
+                    mTvLocation.setText("Latitude " + lat + ", Longitude " + lon);
+                }
+            }
+        });
+
+        getLifecycle().addObserver(mMyLocation);
     }
 }

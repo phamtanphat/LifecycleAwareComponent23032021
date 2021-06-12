@@ -3,15 +3,17 @@ package com.example.lifecycleawarecomponent23032021;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
-import android.os.Handler.Callback;
+import android.util.Log;
+import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
 
-public class MyLocation {
+public class MyLocation implements LifecycleObserver {
     Context mContext;
     OnListenLocation mOnListenLocation;
 
@@ -30,9 +32,9 @@ public class MyLocation {
         mHandler = new Handler();
     }
 
-
     public void startListenLocation() {
         mHandler.postDelayed(runnableGetLocation, 1000);
+
     }
 
     @SuppressLint("MissingPermission")
@@ -57,7 +59,10 @@ public class MyLocation {
             mHandler.postDelayed(this,1000);
         }
     };
-    public void stopGeLocation(){
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    public void stopGetLocation(){
+        Toast.makeText(mContext, "Stopped", Toast.LENGTH_SHORT).show();
         mHandler.removeCallbacks(runnableGetLocation);
     }
 }
